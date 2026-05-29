@@ -3,328 +3,289 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>苏州暖瑞居 - 特灵空调专业服务商</title>
+<title>苏州暖瑞居 — 特灵空调</title>
 <style>
   :root {
-    --primary: #1a5276;
-    --primary-light: #2980b9;
-    --accent: #e67e22;
-    --bg: #f8f9fa;
-    --white: #ffffff;
-    --text: #2c3e50;
-    --muted: #7f8c8d;
-    --light-gray: #ecf0f1;
-    --border: #d5dbdb;
+    --fg: #1a1a1a;
+    --fg-light: #555;
+    --fg-muted: #999;
+    --bg: #fafaf8;
+    --white: #fff;
+    --border: #e8e5e0;
+    --accent: #b8753e;
+    --accent-hover: #9a6232;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-    color: var(--text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Noto Serif SC", "Microsoft YaHei", serif;
+    color: var(--fg);
     background: var(--bg);
     line-height: 1.8;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* ---- Header ---- */
   header {
     position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(255,255,255,0.97);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
+    top: 0; left: 0; right: 0;
+    background: rgba(250,250,248,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid transparent;
     z-index: 1000;
-    padding: 0 40px;
+    transition: border-color 0.3s;
   }
+  header.scrolled { border-bottom-color: var(--border); }
 
   .header-inner {
-    max-width: 1200px;
+    max-width: 1160px;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 70px;
+    height: 72px;
+    padding: 0 32px;
   }
 
   .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--primary);
-    text-decoration: none;
-  }
-
-  .logo-icon {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
     font-size: 20px;
-  }
-
-  nav { display: flex; gap: 32px; }
-
-  nav a {
-    color: var(--text);
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-
-  nav a:hover { color: var(--accent); }
-
-  .header-phone {
-    background: var(--accent);
-    color: white;
-    padding: 10px 22px;
-    border-radius: 25px;
     font-weight: 600;
-    font-size: 15px;
+    color: var(--fg);
     text-decoration: none;
-    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
+  .logo span { color: var(--accent); font-weight: 400; }
 
-  .header-phone:hover {
-    background: #d35400;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(230,126,34,0.3);
+  nav { display: flex; gap: 40px; }
+  nav a {
+    color: var(--fg-light);
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 1px;
+    transition: color 0.25s;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   }
+  nav a:hover { color: var(--fg); }
 
   /* ---- Hero ---- */
   .hero {
-    margin-top: 70px;
-    height: 560px;
-    background: linear-gradient(135deg, #0d3b5e 0%, #1a5276 40%, #1a6d9f 100%);
+    margin-top: 72px;
+    min-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 560"><rect fill="none"/><circle cx="1200" cy="100" r="300" fill="rgba(255,255,255,0.03)"/><circle cx="200" cy="400" r="200" fill="rgba(255,255,255,0.03)"/></svg>');
-    background-size: cover;
-  }
-
-  .hero-content { position: relative; z-index: 1; padding: 0 20px; }
-
-  .hero h1 {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: 2px;
-  }
-
-  .hero .tagline {
-    font-size: 20px;
-    color: rgba(255,255,255,0.85);
-    margin-bottom: 12px;
-  }
-
-  .hero .sub-tagline {
-    font-size: 16px;
-    color: rgba(255,255,255,0.65);
-    margin-bottom: 36px;
-  }
-
-  .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-
-  .btn-primary {
-    background: var(--accent);
-    color: white;
-    padding: 14px 36px;
-    border-radius: 30px;
-    font-size: 17px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .btn-primary:hover {
-    background: #d35400;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(230,126,34,0.4);
-  }
-
-  .btn-outline {
-    background: transparent;
-    color: white;
-    padding: 14px 36px;
-    border-radius: 30px;
-    font-size: 17px;
-    font-weight: 600;
-    text-decoration: none;
-    border: 2px solid rgba(255,255,255,0.5);
-    transition: all 0.2s;
-  }
-
-  .btn-outline:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: white;
-  }
-
-  /* ---- Sections ---- */
-  section { padding: 80px 20px; }
-
-  .section-header {
-    text-align: center;
-    margin-bottom: 56px;
-  }
-
-  .section-header h2 {
-    font-size: 32px;
-    color: var(--primary);
-    margin-bottom: 12px;
-  }
-
-  .section-header .divider {
-    width: 60px;
-    height: 3px;
-    background: var(--accent);
-    margin: 0 auto 16px;
-  }
-
-  .section-header p { color: var(--muted); font-size: 16px; max-width: 600px; margin: 0 auto; }
-
-  .container { max-width: 1200px; margin: 0 auto; }
-
-  /* ---- About ---- */
-  #about {
+    padding: 80px 32px;
     background: var(--white);
   }
+
+  .hero-content { max-width: 680px; }
+
+  .hero .overline {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 300;
+    line-height: 1.25;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    color: var(--fg);
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+
+  .hero .sub {
+    font-size: 17px;
+    color: var(--fg-muted);
+    font-weight: 300;
+    margin-bottom: 48px;
+    line-height: 1.7;
+  }
+
+  .hero-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-block;
+    padding: 14px 40px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.3s;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  .btn-dark {
+    background: var(--fg);
+    color: var(--white);
+    border: 1px solid var(--fg);
+  }
+  .btn-dark:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn-line {
+    background: transparent;
+    color: var(--fg);
+    border: 1px solid #ccc;
+  }
+  .btn-line:hover { border-color: var(--fg); }
+
+  /* ---- Sections ---- */
+  section { padding: 120px 32px; }
+
+  .section-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    color: var(--fg);
+  }
+
+  .section-desc {
+    text-align: center;
+    color: var(--fg-muted);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 520px;
+    margin: 0 auto 80px;
+    line-height: 1.8;
+  }
+
+  .container { max-width: 1140px; margin: 0 auto; }
+
+  /* ---- About ---- */
+  #about { background: var(--white); }
 
   .about-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 80px;
     align-items: center;
   }
 
-  .about-text h3 {
-    font-size: 24px;
-    color: var(--primary);
-    margin-bottom: 16px;
-  }
-
   .about-text p {
-    color: var(--muted);
-    margin-bottom: 14px;
-    line-height: 1.9;
+    color: var(--fg-light);
+    margin-bottom: 24px;
+    font-size: 15px;
+    line-height: 2;
+    font-weight: 300;
   }
 
   .about-stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 28px;
+    gap: 1px;
+    margin-top: 40px;
+    background: var(--border);
   }
 
   .stat-card {
     background: var(--bg);
-    padding: 24px;
-    border-radius: 12px;
+    padding: 36px 28px;
     text-align: center;
-    border: 1px solid var(--border);
   }
 
   .stat-card .num {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--primary-light);
+    font-size: 36px;
+    font-weight: 200;
+    color: var(--accent);
+    letter-spacing: 1px;
   }
 
-  .stat-card .label { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .stat-card .label {
+    color: var(--fg-muted);
+    font-size: 13px;
+    margin-top: 8px;
+    letter-spacing: 1px;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
 
   .about-image {
-    background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    border-radius: 16px;
-    height: 400px;
+    background: #f0ece8;
+    height: 480px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 18px;
     position: relative;
     overflow: hidden;
   }
 
   .about-image::after {
-    content: "苏州暖瑞居";
+    content: "";
     position: absolute;
-    font-size: 48px;
-    font-weight: 700;
-    opacity: 0.15;
-    letter-spacing: 6px;
+    inset: 40px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .about-image .inner-text {
+    font-size: 16px;
+    color: var(--fg-muted);
+    letter-spacing: 3px;
+    font-weight: 300;
   }
 
   /* ---- Products ---- */
-  #products {
-    background: var(--bg);
-  }
+  #products { background: var(--bg); }
 
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
   }
 
   .product-card {
     background: var(--white);
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    transition: all 0.3s;
+    padding: 48px 36px;
+    transition: background 0.35s;
+    position: relative;
   }
 
-  .product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  .product-card:hover { background: #f8f6f2; }
+
+  .product-card .num {
+    font-size: 11px;
+    color: var(--fg-muted);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   }
 
-  .product-img {
-    height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 64px;
+  .product-card h3 {
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
   }
 
-  .product-img.residential { background: linear-gradient(135deg, #e8f6f3, #d1f2eb); }
-  .product-img.commercial { background: linear-gradient(135deg, #ebf5fb, #d4e6f1); }
-  .product-img.vrf { background: linear-gradient(135deg, #fef9e7, #fdebd0); }
-  .product-img.heatpump { background: linear-gradient(135deg, #f5eef8, #e8daef); }
-  .product-img.control { background: linear-gradient(135deg, #eaf2f8, #d4e6f1); }
-  .product-img.accessory { background: linear-gradient(135deg, #fdf2e9, #fae5d3); }
-
-  .product-body { padding: 24px; }
-
-  .product-body h3 { font-size: 20px; color: var(--primary); margin-bottom: 8px; }
-
-  .product-body p { color: var(--muted); font-size: 14px; line-height: 1.7; }
-
-  .product-body .tags { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
-
-  .tag {
-    background: var(--bg);
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 12px;
-    color: var(--primary-light);
-    border: 1px solid var(--border);
+  .product-card p {
+    color: var(--fg-muted);
+    font-size: 14px;
+    line-height: 1.9;
+    font-weight: 300;
   }
 
   /* ---- Why Us ---- */
@@ -332,437 +293,349 @@
 
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
   }
 
   .feature-card {
-    text-align: center;
-    padding: 36px 24px;
-    border-radius: 12px;
-    transition: all 0.3s;
+    background: var(--white);
+    padding: 52px 36px;
+    transition: background 0.35s;
   }
 
-  .feature-card:hover { background: var(--bg); }
+  .feature-card:hover { background: #f8f6f2; }
 
-  .feature-icon {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 20px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  .feature-card .idx {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: 12px;
+    color: var(--fg-muted);
+    margin-bottom: 24px;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   }
 
-  .feature-card h3 { font-size: 18px; color: var(--primary); margin-bottom: 10px; }
+  .feature-card h3 {
+    font-size: 17px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
 
-  .feature-card p { color: var(--muted); font-size: 14px; }
+  .feature-card p {
+    color: var(--fg-muted);
+    font-size: 14px;
+    line-height: 1.9;
+    font-weight: 300;
+  }
 
   /* ---- Contact ---- */
-  #contact {
-    background: linear-gradient(135deg, var(--primary), #0d3b5e);
-    color: white;
-  }
+  #contact { background: var(--fg); color: #aaa; }
 
-  #contact .section-header h2 { color: white; }
-  #contact .section-header p { color: rgba(255,255,255,0.7); }
+  #contact .section-label { color: rgba(255,255,255,0.4); }
+  #contact .section-title { color: #fff; }
+  #contact .section-desc { color: rgba(255,255,255,0.45); }
 
   .contact-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 48px;
+    gap: 80px;
+    align-items: start;
   }
 
-  .contact-info h3 {
-    font-size: 22px;
-    margin-bottom: 24px;
-  }
+  .contact-info { font-weight: 300; font-size: 14px; }
 
   .contact-item {
     display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
-    font-size: 15px;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
   }
 
-  .contact-item .ci-icon {
-    width: 44px;
-    height: 44px;
-    background: rgba(255,255,255,0.12);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
+  .contact-item .label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.3);
+    width: 56px;
     flex-shrink: 0;
+    padding-top: 2px;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+
+  .contact-item .val {
+    color: rgba(255,255,255,0.7);
+    line-height: 1.7;
   }
 
   .contact-form {
-    background: white;
-    border-radius: 14px;
-    padding: 32px;
-    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    padding: 40px;
+    border: 1px solid rgba(255,255,255,0.08);
   }
 
-  .contact-form h3 {
-    font-size: 20px;
-    color: var(--primary);
-    margin-bottom: 20px;
-  }
-
-  .form-group { margin-bottom: 16px; }
-
+  .form-group { margin-bottom: 20px; }
   .form-group label {
     display: block;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: var(--text);
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.35);
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   }
 
   .form-group input,
   .form-group textarea {
     width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
     font-size: 14px;
+    color: #fff;
     font-family: inherit;
-    transition: border-color 0.2s;
-    background: var(--bg);
+    font-weight: 300;
+    transition: border-color 0.3s;
   }
-
   .form-group input:focus,
   .form-group textarea:focus {
     outline: none;
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(41,128,185,0.1);
+    border-bottom-color: rgba(255,255,255,0.4);
   }
-
-  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
 
   .form-submit {
     width: 100%;
-    background: var(--accent);
-    color: white;
+    background: #fff;
+    color: var(--fg);
     padding: 14px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 3px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    margin-top: 12px;
   }
-
-  .form-submit:hover { background: #d35400; }
+  .form-submit:hover { background: #ccc; }
 
   /* ---- Footer ---- */
   footer {
-    background: #0d1b2a;
-    color: rgba(255,255,255,0.6);
+    background: #111;
+    color: rgba(255,255,255,0.3);
     text-align: center;
-    padding: 28px 20px;
-    font-size: 13px;
+    padding: 32px 24px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 300;
   }
 
   /* ---- Responsive ---- */
   @media (max-width: 768px) {
+    .hero { min-height: 70vh; padding: 60px 24px; }
     .hero h1 { font-size: 32px; }
-    .hero { height: 420px; }
-    .about-grid, .contact-grid { grid-template-columns: 1fr; }
-    .about-image { height: 240px; }
     nav { display: none; }
-    .header-phone { font-size: 13px; padding: 8px 16px; }
-    section { padding: 56px 16px; }
-    .products-grid { grid-template-columns: 1fr; }
+    section { padding: 80px 20px; }
+    .about-grid,
+    .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+    .about-image { height: 300px; }
+    .products-grid,
+    .features-grid { grid-template-columns: 1fr; }
+    .about-stats { grid-template-columns: 1fr 1fr; }
+    .product-card { padding: 36px 28px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ==================== HEADER ==================== -->
-<header>
+<header id="header">
   <div class="header-inner">
-    <a href="#" class="logo">
-      <div class="logo-icon">暖</div>
-      苏州暖瑞居
-    </a>
+    <a href="#" class="logo">暖瑞居<span>/</span></a>
     <nav>
-      <a href="#about">关于我们</a>
-      <a href="#products">产品中心</a>
-      <a href="#why-us">为什么选我们</a>
-      <a href="#contact">联系我们</a>
+      <a href="#about">关于</a>
+      <a href="#products">产品</a>
+      <a href="#why-us">优势</a>
+      <a href="#contact">联系</a>
     </nav>
-    <a href="tel:400-000-0000" class="header-phone">📞 400-000-0000</a>
   </div>
 </header>
 
-<!-- ==================== HERO ==================== -->
 <section class="hero">
   <div class="hero-content">
-    <h1>苏州暖瑞居</h1>
-    <p class="tagline">特灵空调 · 专业暖通服务商</p>
-    <p class="sub-tagline">专注中央空调、新风系统及暖通整体解决方案</p>
-    <div class="hero-btns">
-      <a href="#products" class="btn-primary">查看产品</a>
-      <a href="#contact" class="btn-outline">免费咨询</a>
+    <p class="overline">TRANE · 特灵空调授权经销商</p>
+    <h1>为空间赋予<em>舒适</em>的温度</h1>
+    <p class="sub">苏州暖瑞居，专注中央空调与暖通系统。<br>从方案设计到安装售后，我们全程用心。</p>
+    <div class="hero-links">
+      <a href="#products" class="btn btn-dark">了解产品</a>
+      <a href="#contact" class="btn btn-line">预约咨询</a>
     </div>
   </div>
 </section>
 
-<!-- ==================== ABOUT ==================== -->
 <section id="about">
   <div class="container">
-    <div class="section-header">
-      <h2>关于我们</h2>
-      <div class="divider"></div>
-      <p>苏州暖瑞居暖通设备有限公司，扎根苏州，服务长三角</p>
-    </div>
+    <p class="section-label">About</p>
+    <h2 class="section-title">关于暖瑞居</h2>
+    <p class="section-desc">扎根苏州，十余年专注暖通领域，值得信赖的合作伙伴</p>
     <div class="about-grid">
       <div class="about-text">
-        <h3>特灵空调官方授权经销商</h3>
-        <p>
-          苏州暖瑞居是一家集中央空调销售、安装、售后于一体的专业暖通服务公司。
-          作为特灵（Trane）空调苏州地区授权经销商，我们致力于为家庭和商业客户
-          提供高品质的室内环境解决方案。
-        </p>
-        <p>
-          公司拥有经验丰富的设计团队和安装施工队伍，每一个项目都从客户的实际需求出发，
-          量身定制最优方案，确保产品性能最大化、运行最节能。
-        </p>
+        <p>苏州暖瑞居暖通设备有限公司，是特灵（Trane）空调苏州地区官方授权经销商。我们集中央空调销售、设计、安装、售后于一体，致力于为家庭与商业客户提供高标准的室内环境解决方案。</p>
+        <p>每一套方案都从客户的实际空间出发，由专业工程师量身设计，确保系统运行高效、节能、持久稳定。</p>
         <div class="about-stats">
-          <div class="stat-card">
-            <div class="num">15+</div>
-            <div class="label">年行业经验</div>
-          </div>
-          <div class="stat-card">
-            <div class="num">3000+</div>
-            <div class="label">服务客户</div>
-          </div>
-          <div class="stat-card">
-            <div class="num">100%</div>
-            <div class="label">正品保障</div>
-          </div>
-          <div class="stat-card">
-            <div class="num">5年</div>
-            <div class="label">整机质保</div>
-          </div>
+          <div class="stat-card"><div class="num">15+</div><div class="label">年行业经验</div></div>
+          <div class="stat-card"><div class="num">3000+</div><div class="label">服务客户</div></div>
+          <div class="stat-card"><div class="num">100%</div><div class="label">原厂正品</div></div>
+          <div class="stat-card"><div class="num">5 年</div><div class="label">整机质保</div></div>
         </div>
       </div>
       <div class="about-image">
-        <span style="z-index: 2; font-size: 20px;">🏢 专业暖通 · 品质生活</span>
+        <span class="inner-text">暖 瑞 居</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== PRODUCTS ==================== -->
 <section id="products">
   <div class="container">
-    <div class="section-header">
-      <h2>产品中心</h2>
-      <div class="divider"></div>
-      <p>特灵空调全系列产品，满足不同场景需求</p>
-    </div>
+    <p class="section-label">Products</p>
+    <h2 class="section-title">产品体系</h2>
+    <p class="section-desc">特灵空调全系列，覆盖家庭与商业全场景</p>
     <div class="products-grid">
-
       <div class="product-card">
-        <div class="product-img residential">❄️</div>
-        <div class="product-body">
-          <h3>家用中央空调</h3>
-          <p>超薄风管机、多联机系列，静音节能，完美融入家居装修，为您打造恒温恒湿的舒适空间。</p>
-          <div class="tags">
-            <span class="tag">变频节能</span>
-            <span class="tag">超静音</span>
-            <span class="tag">隐藏安装</span>
-          </div>
-        </div>
+        <p class="num">01</p>
+        <h3>家用中央空调</h3>
+        <p>超薄风管机、多联机系列，静音节能，完美融入家装设计，营造恒温恒湿的居住空间。</p>
       </div>
-
       <div class="product-card">
-        <div class="product-img commercial">🏭</div>
-        <div class="product-body">
-          <h3>商用中央空调</h3>
-          <p>模块化风冷热泵、屋顶机、末端设备，适用于写字楼、商场、酒店等商业场所的冷暖需求。</p>
-          <div class="tags">
-            <span class="tag">模块化</span>
-            <span class="tag">大风量</span>
-            <span class="tag">智能控制</span>
-          </div>
-        </div>
+        <p class="num">02</p>
+        <h3>商用中央空调</h3>
+        <p>模块化风冷热泵、屋顶机、末端设备，满足写字楼、商场、酒店等商业空间的冷暖需求。</p>
       </div>
-
       <div class="product-card">
-        <div class="product-img vrf">🏠</div>
-        <div class="product-body">
-          <h3>VRF 多联机系统</h3>
-          <p>特灵全直流变频多联机，独立分区控温，灵活组合，适用于别墅、大平层及中小型商业空间。</p>
-          <div class="tags">
-            <span class="tag">独立控温</span>
-            <span class="tag">高效节能</span>
-            <span class="tag">灵活组合</span>
-          </div>
-        </div>
+        <p class="num">03</p>
+        <h3>VRF 多联机系统</h3>
+        <p>全直流变频技术，独立分区控温，灵活组合，适用于别墅、大平层及中小型商业空间。</p>
       </div>
-
       <div class="product-card">
-        <div class="product-img heatpump">🌍</div>
-        <div class="product-body">
-          <h3>地源/空气源热泵</h3>
-          <p>利用可再生地热或空气热能，一套系统解决制冷、采暖、生活热水，绿色低碳之选。</p>
-          <div class="tags">
-            <span class="tag">可再生</span>
-            <span class="tag">三联供</span>
-            <span class="tag">低碳环保</span>
-          </div>
-        </div>
+        <p class="num">04</p>
+        <h3>地源 / 空气源热泵</h3>
+        <p>利用可再生地热或空气能，一套系统实现制冷、采暖、热水三联供，绿色低碳。</p>
       </div>
-
       <div class="product-card">
-        <div class="product-img control">📱</div>
-        <div class="product-body">
-          <h3>智能控制系统</h3>
-          <p>Trane 智能温控器与 APP 远程控制系统，随时随地管理室内环境，能耗一目了然。</p>
-          <div class="tags">
-            <span class="tag">APP远程</span>
-            <span class="tag">能耗管理</span>
-            <span class="tag">智能联动</span>
-          </div>
-        </div>
+        <p class="num">05</p>
+        <h3>智能控制系统</h3>
+        <p>Trane 智能温控器与 APP 远程管理，随时掌控室内环境，能耗数据一目了然。</p>
       </div>
-
       <div class="product-card">
-        <div class="product-img accessory">🔧</div>
-        <div class="product-body">
-          <h3>新风及净化系统</h3>
-          <p>搭配全热交换新风机组，高效过滤 PM2.5，引入新鲜空气的同时回收能量，健康呼吸每一天。</p>
-          <div class="tags">
-            <span class="tag">PM2.5过滤</span>
-            <span class="tag">全热交换</span>
-            <span class="tag">静音运行</span>
-          </div>
-        </div>
+        <p class="num">06</p>
+        <h3>新风及净化系统</h3>
+        <p>全热交换新风机，高效过滤 PM2.5，引入新鲜空气的同时回收能量，健康呼吸。</p>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ==================== WHY US ==================== -->
 <section id="why-us">
   <div class="container">
-    <div class="section-header">
-      <h2>为什么选择暖瑞居</h2>
-      <div class="divider"></div>
-      <p>不止卖产品，更提供全程无忧的服务体验</p>
-    </div>
+    <p class="section-label">Why Us</p>
+    <h2 class="section-title">选择暖瑞居的理由</h2>
+    <p class="section-desc">不只提供产品，更提供全程无忧的服务</p>
     <div class="features-grid">
-
       <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3>正品授权</h3>
-        <p>特灵空调官方授权经销商，所有产品均来自原厂，享受厂家全国联保服务。</p>
+        <div class="idx">01</div>
+        <h3>官方授权</h3>
+        <p>特灵空调授权经销商，所有产品均为原厂正品，享受厂家全国联保。</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">📐</div>
-        <h3>免费量房设计</h3>
-        <p>专业工程师免费上门勘测，根据户型和使用需求，提供一对一最优方案。</p>
+        <div class="idx">02</div>
+        <h3>免费勘测设计</h3>
+        <p>工程师免费上门勘测，根据户型与使用需求，一对一量身定制方案。</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">👨‍🔧</div>
-        <h3>专业安装团队</h3>
-        <p>自有安装团队，持证上岗，严格按照特灵安装规范施工，杜绝隐患。</p>
+        <div class="idx">03</div>
+        <h3>专业安装</h3>
+        <p>自有施工团队，持证上岗，严格遵循特灵安装标准，杜绝质量隐患。</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>完善售后服务</h3>
-        <p>24小时响应机制，定期回访巡检，让您买得放心、用得省心。</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">💰</div>
+        <div class="idx">04</div>
         <h3>透明报价</h3>
-        <p>一价全包，无隐藏收费。合同列明所有材料和人工明细，杜绝中途加价。</p>
+        <p>合同列明所有材料及人工明细，一价全包，无任何隐形收费。</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">🏆</div>
-        <h3>丰富项目经验</h3>
-        <p>服务超过3000个家庭和企业客户，覆盖住宅、别墅、写字楼、商铺等多种场景。</p>
+        <div class="idx">05</div>
+        <h3>完善售后</h3>
+        <p>24 小时响应，定期回访巡检，让您买得放心、用得安心。</p>
       </div>
-
+      <div class="feature-card">
+        <div class="idx">06</div>
+        <h3>丰富经验</h3>
+        <p>服务超过 3000 个家庭与企业，覆盖住宅、别墅、写字楼、商铺等多种场景。</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== CONTACT ==================== -->
 <section id="contact">
   <div class="container">
-    <div class="section-header">
-      <h2>联系我们</h2>
-      <div class="divider"></div>
-      <p>欢迎来电或到店咨询，我们将竭诚为您服务</p>
-    </div>
+    <p class="section-label">Contact</p>
+    <h2 class="section-title">联系我们</h2>
+    <p class="section-desc">欢迎来电或到店，我们将为您提供专业咨询</p>
     <div class="contact-grid">
       <div class="contact-info">
-        <h3>联系方式</h3>
         <div class="contact-item">
-          <div class="ci-icon">📍</div>
-          <span>苏州市工业园区XXX路XX号</span>
+          <span class="label">地址</span>
+          <span class="val">苏州市工业园区 XXX 路 XX 号</span>
         </div>
         <div class="contact-item">
-          <div class="ci-icon">📞</div>
-          <span>400-000-0000 / 0512-XXXXXXXX</span>
+          <span class="label">电话</span>
+          <span class="val">400-000-0000<br>0512-XXXXXXXX</span>
         </div>
         <div class="contact-item">
-          <div class="ci-icon">📧</div>
-          <span>info@nuanruiju.com</span>
+          <span class="label">邮箱</span>
+          <span class="val">info@nuanruiju.com</span>
         </div>
         <div class="contact-item">
-          <div class="ci-icon">🕐</div>
-          <span>周一至周日 9:00 - 18:00</span>
-        </div>
-        <div class="contact-item">
-          <div class="ci-icon">🚇</div>
-          <span>地铁 X 号线 XX 站，出站步行 5 分钟</span>
+          <span class="label">时间</span>
+          <span class="val">周一至周日 9:00 – 18:00</span>
         </div>
       </div>
-
       <div class="contact-form">
-        <h3>在线咨询</h3>
         <div class="form-group">
-          <label>姓名</label>
-          <input type="text" placeholder="请输入您的姓名">
+          <label>您的姓名</label>
+          <input type="text" placeholder="姓名">
         </div>
         <div class="form-group">
-          <label>电话</label>
-          <input type="tel" placeholder="请输入您的手机号码">
+          <label>联系电话</label>
+          <input type="tel" placeholder="手机号码">
         </div>
         <div class="form-group">
-          <label>需求类型</label>
-          <input type="text" placeholder="如：家用中央空调安装、商用空调改造等">
+          <label>需求简述</label>
+          <input type="text" placeholder="如：家用中央空调安装、商用改造">
         </div>
         <div class="form-group">
-          <label>备注</label>
-          <textarea placeholder="请简要描述您的需求和房屋情况（面积、户型等）..."></textarea>
+          <label>补充说明</label>
+          <textarea placeholder="房屋面积、户型、预算等……"></textarea>
         </div>
-        <button class="form-submit">提交咨询</button>
+        <button class="form-submit">提 交 咨 询</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== FOOTER ==================== -->
 <footer>
-  <p>&copy; 2026 苏州暖瑞居暖通设备有限公司 &nbsp;|&nbsp; 特灵空调苏州授权经销商 &nbsp;|&nbsp; 苏ICP备XXXXXXXX号</p>
+  &copy; 2026 苏州暖瑞居暖通设备有限公司 &nbsp;·&nbsp; 特灵空调苏州授权经销商
 </footer>
+
+<script>
+  // subtle header shadow on scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('header').classList.toggle('scrolled', window.scrollY > 20);
+  });
+</script>
 
 </body>
 </html>
