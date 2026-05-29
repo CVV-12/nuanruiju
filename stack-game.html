@@ -141,11 +141,10 @@ window.addEventListener('resize', resize);
 
 // ---- Game State ----
 const BOX_HEIGHT = 26;
-const SPEED_BASE = 5.5;          // much faster starting speed
-const SPEED_PER_SCORE = 0.6;     // aggressive per-score increase
-const SHRINK_RATE = 0.45;        // faster shrink
-const PERFECT_THRESHOLD = 3;
+const SPEED_BASE = 10;           // 初始速度 10
 const MIN_WIDTH = 8;
+const SHRINK_RATE = 0.45;
+const PERFECT_THRESHOLD = 3;
 
 const COLORS = [
   '#e74c3c', '#e67e22', '#f1c40f', '#2ecc71',
@@ -177,7 +176,7 @@ function spawnBlock() {
   const dir = Math.random() < 0.5 ? 1 : -1;
   const w = base.w;
   const startX = dir === 1 ? -w : W;
-  const speed = SPEED_BASE + score * SPEED_PER_SCORE + score * score * 0.008 + (Math.random() - 0.5) * 1.5;
+  const speed = SPEED_BASE + Math.pow(2, score / 3) * 0.15 + (Math.random() - 0.5) * 0.6;
   current = {
     x: startX,
     originW: w,
@@ -443,11 +442,13 @@ function update() {
   // Bounce at edges
   if (current.dir === 1 && current.x + current.w >= W) {
     current.dir = -1;
-    // Speed boost after bounce (adds difficulty)
-    current.speed += 0.5 + score * 0.04;
+    // Exponential bounce boost
+    const boost = 0.5 + Math.pow(2, score / 3) * 0.03;
+    current.speed += boost;
   } else if (current.dir === -1 && current.x <= 0) {
     current.dir = 1;
-    current.speed += 0.5 + score * 0.04;
+    const boost = 0.5 + Math.pow(2, score / 3) * 0.03;
+    current.speed += boost;
   }
 }
 
