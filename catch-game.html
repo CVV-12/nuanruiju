@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>接水果 — Catch Game</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .game-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 500px;
+    max-height: 800px;
+  }
+
+  canvas { display: block; width: 100%; height: 100%; }
+
+  .hud {
+    position: absolute;
+    top: 48px;
+    left: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .hud-item {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+  .hud-item span {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 200;
+    display: block;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="game-wrapper">
+  <canvas id="game"></canvas>
+  <div class="hud">
+    <div class="hud-item">得分<span id="score">0</span></div>
+    <div class="hud-item">生命<span id="lives">❤️❤️❤️</span></div>
+    <div class="hud-item">最高<span id="best">0</span></div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const livesEl = document.getElementById('lives');
+const bestEl = document.getElementById('best');
+
+let W, H;
+function resize() {
+  const wrapper = canvas.parentElement;
+  W = wrapper.clientWidth;
+  H = wrapper.clientHeight;
+  canvas.width = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ---- State ----
+const COLORS = [
+  '#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff',
+  '#ff922b', '#20c997', '#f06595', '#845ef7',
+  '#fcc419', '#12b886', '#e64980', '#5c7cfa',
+];
+
+let basket = { x: W / 2, w: 90 };
+let fruits = [];
+let score = 0;
+let lives = 3;
+let best = parseInt(localStorage.getItem('catchBest') || '0');
+let gameOver = false;
+let spawnTimer = 0;
+let particles = [];
+
+function spawn() {
+  const r = 14 + Math.random() * 10;
+  fruits.push({
+    x: r + Math.random() * (W - r * 2),
+    y: -30,
+    r: r,
+    vy: 1.2 + Math.random() * 2.2,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+  });
+}
+
+function init() {
+  basket = { x: W / 2, w: 90 };
+  fruits = [];
+  particles = [];
+  score = 0;
+  lives = 3;
+  gameOver = false;
+  spawnTimer = 0;
+  updateUI();
+}
+
+function updateUI() {
+  scoreEl.textContent = score;
+  livesEl.textContent = '❤️'.repeat(Math.max(0, lives));
+  bestEl.textContent = best;
+}
+
+// ---- Input ----
+canvas.addEventListener('mousemove', (e) => {
+  basket.x = e.clientX - canvas.getBoundingClientRect().left;
+});
+
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  basket.x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+});
+
+canvas.addEventListener('click', (e) => {
+  if (gameOver) init();
+});
+
+// ---- Update ----
+function update() {
+  if (gameOver) return;
+
+  // Clamp basket
+  basket.x = Math.max(basket.w / 2, Math.min(W - basket.w / 2, basket.x));
+
+  // Spawn
+  spawnTimer++;
+  const rate = Math.max(18, 55 - score * 1.2);
+  if (spawnTimer >= rate) {
+    spawn();
+    spawnTimer = 0;
+  }
+
+  // Move fruits
+  for (let i = fruits.length - 1; i >= 0; i--) {
+    const f = fruits[i];
+    f.y += f.vy;
+
+    // Check catch
+    if (f.y + f.r >= H - 60 && f.y - f.r <= H - 40) {
+      if (Math.abs(f.x - basket.x) < basket.w / 2 + f.r) {
+        // Caught
+        score++;
+        if (score > best) {
+          best = score;
+          localStorage.setItem('catchBest', best);
+        }
+        // Particles
+        for (let j = 0; j < 6; j++) {
+          particles.push({
+            x: f.x, y: f.y,
+            vx: (Math.random() - 0.5) * 4,
+            vy: -Math.random() * 4 - 2,
+            life: 20,
+            color: f.color,
+            r: 3 + Math.random() * 3,
+          });
+        }
+        fruits.splice(i, 1);
+        updateUI();
+        continue;
+      }
+    }
+
+    // Miss
+    if (f.y > H + 30) {
+      fruits.splice(i, 1);
+      lives--;
+      updateUI();
+      if (lives <= 0) {
+        gameOver = true;
+        bestEl.textContent = best;
+      }
+    }
+  }
+
+  // Particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15;
+    p.life--;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+// ---- Draw ----
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // BG
+  const bgGrad = ctx.createRadialGradient(W/2, H/2, 100, W/2, H/2, W);
+  bgGrad.addColorStop(0, '#1a1a3e');
+  bgGrad.addColorStop(1, '#080818');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Floor
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  ctx.fillRect(0, H - 30, W, 30);
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.beginPath();
+  ctx.moveTo(0, H - 30);
+  ctx.lineTo(W, H - 30);
+  ctx.stroke();
+
+  // Fruits
+  for (const f of fruits) {
+    drawFruit(f.x, f.y, f.r, f.color);
+  }
+
+  // Particles
+  for (const p of particles) {
+    ctx.globalAlpha = p.life / 20;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Basket
+  drawBasket(basket.x, H - 55, basket.w);
+
+  // Game Over
+  if (gameOver) {
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    ctx.font = '300 34px "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('游戏结束', W/2, H/2 - 16);
+    ctx.font = '15px "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText(`得分: ${score}  最高: ${best}`, W/2, H/2 + 24);
+    ctx.fillText('点击屏幕重新开始', W/2, H/2 + 52);
+  }
+}
+
+function drawFruit(x, y, r, color) {
+  // Body
+  const grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, r*0.1, x, y, r);
+  grad.addColorStop(0, '#fff');
+  grad.addColorStop(0.15, color);
+  grad.addColorStop(1, shadeColor(color, -40));
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Stem
+  ctx.strokeStyle = '#4a3';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x, y - r);
+  ctx.quadraticCurveTo(x + 4, y - r - 6, x + 10, y - r - 4);
+  ctx.stroke();
+
+  // Leaf
+  ctx.fillStyle = '#5c4';
+  ctx.beginPath();
+  ctx.ellipse(x + 7, y - r - 5, 6, 3, 0.4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawBasket(x, y, w) {
+  const h = 20;
+  ctx.fillStyle = '#5c3d2e';
+  ctx.beginPath();
+  ctx.moveTo(x - w/2, y);
+  ctx.lineTo(x - w/2 + 10, y + h);
+  ctx.lineTo(x + w/2 - 10, y + h);
+  ctx.lineTo(x + w/2, y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Rim
+  ctx.strokeStyle = '#8b6914';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x - w/2 - 4, y);
+  ctx.lineTo(x + w/2 + 4, y);
+  ctx.stroke();
+
+  // Handle
+  ctx.strokeStyle = '#8b6914';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(x, y, w * 0.45, Math.PI, 0);
+  ctx.stroke();
+}
+
+function shadeColor(color, percent) {
+  const num = parseInt(color.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+  const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+  const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+  return `rgb(${R},${G},${B})`;
+}
+
+// ---- Loop ----
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+init();
+loop();
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小游戏合集</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: #1a1a2e;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .container { max-width: 500px; padding: 40px 24px; text-align: center; }
+  h1 { font-size: 28px; font-weight: 300; letter-spacing: 3px; margin-bottom: 8px; }
+  .sub { color: rgba(255,255,255,0.4); font-size: 13px; letter-spacing: 2px; margin-bottom: 48px; }
+
+  .game-card {
+    display: block;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 32px 24px;
+    margin-bottom: 16px;
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.3s;
+    text-align: left;
+  }
+  .game-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+  .game-card h3 { font-size: 20px; font-weight: 500; letter-spacing: 1px; margin-bottom: 6px; }
+  .game-card p { color: rgba(255,255,255,0.45); font-size: 13px; font-weight: 300; }
+  .game-card .icon { font-size: 36px; margin-bottom: 12px; }
+
+  footer { margin-top: 48px; color: rgba(255,255,255,0.2); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>小游戏合集</h1>
+  <p class="sub">点击进入，即刻开玩</p>
+
+  <a href="stack-game.html" class="game-card">
+    <div class="icon">📦</div>
+    <h3>叠叠高</h3>
+    <p>点击屏幕放下方块，叠得越准分越高。挑战你的节奏感。</p>
+  </a>
+
+  <a href="catch-game.html" class="game-card">
+    <div class="icon">🍎</div>
+    <h3>接水果</h3>
+    <p>移动鼠标或手指接住掉落的水果，3 条命，看你能拿多少分。</p>
+  </a>
+
+  <footer>点击即玩 · 无需下载</footer>
+</div>
+</body>
+</html>
