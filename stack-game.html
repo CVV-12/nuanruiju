@@ -141,10 +141,10 @@ window.addEventListener('resize', resize);
 
 // ---- Game State ----
 const BOX_HEIGHT = 26;
-const SPEED_BASE = 2.8;        // faster starting speed
-const SPEED_PER_SCORE = 0.15;  // steeper ramp
-const SHRINK_RATE = 0.25;      // block shrinks as it moves
-const PERFECT_THRESHOLD = 3;   // tighter perfect window (was 5)
+const SPEED_BASE = 2.8;
+const SPEED_PER_SCORE = 0.35;   // much steeper ramp: speed grows fast
+const SHRINK_RATE = 0.32;       // faster shrink when hesitating
+const PERFECT_THRESHOLD = 3;
 const MIN_WIDTH = 8;
 
 const COLORS = [
@@ -177,7 +177,7 @@ function spawnBlock() {
   const dir = Math.random() < 0.5 ? 1 : -1;
   const w = base.w;
   const startX = dir === 1 ? -w : W;
-  const speed = SPEED_BASE + score * SPEED_PER_SCORE + (Math.random() - 0.5) * 0.8;
+  const speed = SPEED_BASE + score * SPEED_PER_SCORE + score * score * 0.004 + (Math.random() - 0.5) * 1.2;
   current = {
     x: startX,
     originW: w,
@@ -243,8 +243,8 @@ function placeBlock() {
     baseW = newW;
   }
 
-  // Enable shrink after a few placements
-  if (score >= 5) shrinkActive = true;
+  // Enable shrink earlier
+  if (score >= 3) shrinkActive = true;
 
   // Scroll camera
   const targetY = blocks[blocks.length - 1].y - H * 0.4;
@@ -444,10 +444,10 @@ function update() {
   if (current.dir === 1 && current.x + current.w >= W) {
     current.dir = -1;
     // Speed boost after bounce (adds difficulty)
-    current.speed += 0.15;
+    current.speed += 0.3 + score * 0.02;
   } else if (current.dir === -1 && current.x <= 0) {
     current.dir = 1;
-    current.speed += 0.15;
+    current.speed += 0.3 + score * 0.02;
   }
 }
 
