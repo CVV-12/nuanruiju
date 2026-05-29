@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 使用指南</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --surface: #16213e;
+    --primary: #d4a574;
+    --text: #e0d6c2;
+    --muted: #8b7d6b;
+    --code-bg: #0f0f1a;
+    --border: #2a2a3e;
+    --accent: #c792ea;
+    --green: #c3e88d;
+    --blue: #82aaff;
+    --red: #ff5370;
+    --yellow: #ffcb6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    text-align: center;
+    padding: 80px 20px 60px;
+    background: linear-gradient(180deg, #16213e 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero .logo {
+    font-size: 56px;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero .subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ---- Container ---- */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ---- Section ---- */
+  section {
+    margin-top: 56px;
+  }
+
+  section h2 {
+    font-size: 26px;
+    color: #fff;
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  section h2 .icon { font-size: 28px; }
+
+  section h3 {
+    font-size: 19px;
+    color: var(--primary);
+    margin: 28px 0 10px;
+  }
+
+  section p {
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  /* ---- Code block ---- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    overflow-x: auto;
+    margin: 14px 0 22px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13.5px;
+  }
+
+  :not(pre) > code {
+    background: var(--code-bg);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+
+  /* ---- Highlight ---- */
+  .hl-cmd  { color: var(--blue); }
+  .hl-arg  { color: var(--yellow); }
+  .hl-str  { color: var(--green); }
+  .hl-note { color: var(--muted); }
+
+  /* ---- Tip box ---- */
+  .tip {
+    background: #1e2a1e;
+    border-left: 4px solid var(--green);
+    padding: 14px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+
+  .tip::before {
+    content: "💡 提示：";
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .warn {
+    background: #2e2210;
+    border-left: 4px solid var(--yellow);
+    padding: 14px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 18px 0;
+    font-size: 14.5px;
+  }
+
+  .warn::before {
+    content: "⚠️ 注意：";
+    font-weight: 600;
+    color: var(--yellow);
+  }
+
+  /* ---- Table ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 11px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td code { font-size: 13px; }
+
+  /* ---- Nav ---- */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-top: 48px;
+  }
+
+  .toc h3 {
+    margin-top: 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .toc ol {
+    columns: 2;
+    padding-left: 20px;
+    margin-top: 10px;
+    color: var(--muted);
+  }
+
+  .toc a {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .toc a:hover { text-decoration: underline; }
+
+  /* ---- Footer ---- */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 28px; }
+    .toc ol { columns: 1; }
+    pre { padding: 14px 16px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="logo">🟧</div>
+  <h1>Claude Code 使用指南</h1>
+  <p class="subtitle">
+    从零开始，学会用 Claude Code 写代码、改 Bug、读项目。
+  </p>
+</header>
+
+<div class="container">
+
+<!-- ============ TOC ============ -->
+<nav class="toc">
+  <h3>📑 目录</h3>
+  <ol>
+    <li><a href="#what-is">Claude Code 是什么</a></li>
+    <li><a href="#install">安装与启动</a></li>
+    <li><a href="#basic">基本对话方式</a></li>
+    <li><a href="#context">让 Claude 看到你的代码</a></li>
+    <li><a href="#edit">让 Claude 帮你写代码</a></li>
+    <li><a href="#terminal">终端命令执行</a></li>
+    <li><a href="#slash">斜杠命令速查</a></li>
+    <li><a href="#permissions">权限控制</a></li>
+    <li><a href="#memory">记忆系统</a></li>
+    <li><a href="#vscode">VS Code 中使用</a></li>
+    <li><a href="#tips">实用技巧</a></li>
+  </ol>
+</nav>
+
+<!-- ============ 1. 是什么 ============ -->
+<section id="what-is">
+  <h2><span class="icon">1️⃣</span> Claude Code 是什么</h2>
+  <p>
+    Claude Code 是 Anthropic 推出的 <strong>AI 编程助手</strong>，运行在你的终端里。
+    它不是一个普通的聊天机器人——它可以直接<strong>读取你的项目文件</strong>、<strong>编辑代码</strong>、
+    <strong>运行终端命令</strong>，像一个真正的同事一样和你协作。
+  </p>
+  <p>你可以把它理解为：一个能直接动手干活的 AI 结对编程伙伴。</p>
+
+  <h3>它能做什么？</h3>
+  <table>
+    <thead>
+      <tr><th>能力</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🔍 阅读代码</td><td>快速理解项目结构、查找函数定义、追踪引用关系</td></tr>
+      <tr><td>✏️ 编辑文件</td><td>精确修改代码，支持单文件和跨文件重构</td></tr>
+      <tr><td>💻 运行命令</td><td>执行 <code>npm test</code>、<code>git diff</code> 等终端命令</td></tr>
+      <tr><td>🔧 调试 Bug</td><td>分析错误日志，定位根因并直接修复</td></tr>
+      <tr><td>📦 管理 Git</td><td>创建分支、提交代码、生成 PR 描述</td></tr>
+      <tr><td>🧠 持久记忆</td><td>记住你的偏好和项目约定，下次对话自动加载</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ 2. 安装 ============ -->
+<section id="install">
+  <h2><span class="icon">2️⃣</span> 安装与启动</h2>
+
+  <h3>安装</h3>
+  <pre><span class="hl-note"># macOS / Linux</span>
+<span class="hl-cmd">npm install -g @anthropic-ai/claude-code</span>
+
+<span class="hl-note"># 或者用 Homebrew</span>
+<span class="hl-cmd">brew install claude-code</span></pre>
+
+  <h3>启动</h3>
+  <pre><span class="hl-note"># 进入你的项目目录，然后运行：</span>
+<span class="hl-cmd">claude</span></pre>
+
+  <p>首次启动会让你登录 Anthropic 账号并选择订阅计划。之后就可以直接在终端里和 Claude 对话了。</p>
+
+  <div class="tip">建议在一个 Git 仓库的根目录下启动 Claude Code，这样它能自动感知整个项目的上下文。</div>
+</section>
+
+<!-- ============ 3. 基本对话 ============ -->
+<section id="basic">
+  <h2><span class="icon">3️⃣</span> 基本对话方式</h2>
+  <p>打开 Claude Code 后，你看到的是一个交互式命令行界面。直接<strong>用自然语言</strong>描述你想做的事情即可：</p>
+
+  <pre><span class="hl-note"># 示例对话</span>
+<span class="hl-cmd">你：</span>帮我在 src/utils 下创建一个 formatDate.ts 工具函数
+<span class="hl-cmd">你：</span>这个函数有什么问题？为什么在 Safari 上报错？
+<span class="hl-cmd">你：</span>把项目中所有的 var 改成 const/let
+<span class="hl-cmd">你：</span>帮我解释一下 auth.ts 里的登录流程</pre>
+
+  <div class="tip">不要只给模糊的指令。告诉 Claude <strong>你要什么、在哪里、为什么</strong>，结果会好很多。比如「帮我在 checkout 页面加一个 loading 状态，防止用户重复提交」比「加个 loading」好得多。</div>
+</section>
+
+<!-- ============ 4. 上下文 ============ -->
+<section id="context">
+  <h2><span class="icon">4️⃣</span> 让 Claude 看到你的代码</h2>
+
+  <p>Claude Code 默认可以浏览你的项目目录并读取文件。有几种方式让它理解你的代码：</p>
+
+  <h3>方式一：直接提到文件名</h3>
+  <pre><span class="hl-cmd">你：</span>看看 <span class="hl-str">src/components/Header.tsx</span>，帮我把这个组件改成响应式的</pre>
+
+  <h3>方式二：用 @ 引用（在 IDE 中）</h3>
+  <p>如果你在 VS Code 或 JetBrains 插件中使用 Claude Code，可以用 <code>@</code> 符号引用文件、文件夹或符号：</p>
+  <pre><span class="hl-cmd">你：</span>帮我重构 <span class="hl-arg">@src/services/api.ts</span> 里的请求逻辑，加上错误重试</pre>
+
+  <h3>方式三：拖拽文件（桌面版）</h3>
+  <p>在桌面版应用中，直接把文件或文件夹拖进对话窗口即可。</p>
+
+  <h3>方式四：让 Claude 自己去探索</h3>
+  <pre><span class="hl-cmd">你：</span>帮我了解一下这个项目的路由结构
+<span class="hl-note"># Claude 会自动用 ls、grep、read 等工具去探索项目</span></pre>
+
+  <div class="warn">Claude 一次能看到的上下文是有限的。如果你要做一个很大的改动，建议拆成小步骤，逐步推进。</div>
+</section>
+
+<!-- ============ 5. 写代码 ============ -->
+<section id="edit">
+  <h2><span class="icon">5️⃣</span> 让 Claude 帮你写代码</h2>
+
+  <p>Claude Code 不仅能回答问题，还能<strong>直接修改你的文件</strong>。每次修改前，它会显示具体的 diff，让你确认。</p>
+
+  <h3>常见场景</h3>
+  <table>
+    <thead>
+      <tr><th>场景</th><th>你可以这样说</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>新增功能</td><td>「在 settings 页面加一个深色模式切换开关」</td></tr>
+      <tr><td>修复 Bug</td><td>「用户提交表单后页面刷新了，应该阻止默认行为，帮我修一下」</td></tr>
+      <tr><td>重构代码</td><td>「把 userService.ts 里的三个重复的 fetch 调用抽成一个公共函数」</td></tr>
+      <tr><td>写测试</td><td>「给 calculateTotal 函数写单元测试，覆盖边界情况」</td></tr>
+      <tr><td>加注释</td><td>「给这个复杂的 SQL 查询加上中文注释说明每一步的逻辑」</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">改完之后，你可以让 Claude 直接运行测试或启动项目来验证改动是否正确。比如：「改完了，帮我跑一下测试看看有没有问题」。</div>
+</section>
+
+<!-- ============ 6. 终端 ============ -->
+<section id="terminal">
+  <h2><span class="icon">6️⃣</span> 终端命令执行</h2>
+
+  <p>Claude Code 可以代表你执行终端命令。这在以下场景特别有用：</p>
+
+  <pre><span class="hl-note"># 实际操作示例</span>
+<span class="hl-cmd">你：</span>帮我装一下 lodash 和 date-fns
+<span class="hl-note">→ Claude 执行：npm install lodash date-fns</span>
+
+<span class="hl-cmd">你：</span>看看我改了哪些文件
+<span class="hl-note">→ Claude 执行：git status && git diff</span>
+
+<span class="hl-cmd">你：</span>跑一下测试，如果有失败的帮我看原因
+<span class="hl-note">→ Claude 执行：npm test，然后分析失败输出</span>
+
+<span class="hl-cmd">你：</span>帮我创建一个新分支 feature/user-avatar 并切换过去
+<span class="hl-note">→ Claude 执行：git checkout -b feature/user-avatar</span></pre>
+
+  <div class="warn">某些可能有风险的操作（如 <code>git push --force</code>、<code>rm -rf</code>、删除数据库等），Claude 会先征求你的确认。请仔细阅读确认提示再批准。</div>
+</section>
+
+<!-- ============ 7. 斜杠命令 ============ -->
+<section id="slash">
+  <h2><span class="icon">7️⃣</span> 斜杠命令速查</h2>
+
+  <p>在对话中输入 <code>/</code> 可以触发各种内置命令：</p>
+
+  <table>
+    <thead>
+      <tr><th>命令</th><th>作用</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/help</code></td><td>查看帮助信息</td></tr>
+      <tr><td><code>/clear</code></td><td>清空当前对话历史，开始新话题</td></tr>
+      <tr><td><code>/compact</code></td><td>压缩对话上下文，释放空间（保留关键信息）</td></tr>
+      <tr><td><code>/config</code></td><td>修改配置（主题、模型等）</td></tr>
+      <tr><td><code>/review</code></td><td>对当前分支的改动进行代码审查</td></tr>
+      <tr><td><code>/simplify</code></td><td>自动简化当前 diff 中的代码</td></tr>
+      <tr><td><code>/security-review</code></td><td>对当前改动进行安全审查</td></tr>
+      <tr><td><code>/init</code></td><td>为当前项目生成 CLAUDE.md 配置文件</td></tr>
+      <tr><td><code>/run</code></td><td>启动项目的应用并验证改动</td></tr>
+      <tr><td><code>/verify</code></td><td>验证某个改动是否真的生效了</td></tr>
+      <tr><td><code>/loop</code></td><td>每隔一段时间重复执行某个命令</td></tr>
+      <tr><td><code>/add-dir</code></td><td>添加工作目录之外的文件夹到上下文</td></tr>
+      <tr><td><code>/cost</code></td><td>查看当前会话的 token 消耗</td></tr>
+      <tr><td><code>/stats</code></td><td>查看使用统计数据</td></tr>
+      <tr><td><code>/feedback</code></td><td>向 Anthropic 提交产品反馈</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ 8. 权限 ============ -->
+<section id="permissions">
+  <h2><span class="icon">8️⃣</span> 权限控制</h2>
+
+  <p>出于安全考虑，Claude Code 在执行某些操作前需要你的确认。权限分为几个级别：</p>
+
+  <table>
+    <thead>
+      <tr><th>级别</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🔴 需确认</td><td>写入文件、执行命令、网络请求等——每次都需要你批准</td></tr>
+      <tr><td>🟡 会话内允许</td><td>在当前会话中记住你的选择，同类操作不再重复询问</td></tr>
+      <tr><td>🟢 始终允许</td><td>写入到 <code>settings.json</code>，以后永远不再询问（谨慎使用）</td></tr>
+    </tbody>
+  </table>
+
+  <p>你可以在 <code>~/.claude/settings.json</code>（全局）或项目中的 <code>.claude/settings.json</code> 里配置权限规则。</p>
+
+  <div class="warn">不要对 <code>git push --force</code>、数据库删除等危险操作设置「始终允许」。保持确认机制可以防止意外。</div>
+</section>
+
+<!-- ============ 9. 记忆 ============ -->
+<section id="memory">
+  <h2><span class="icon">9️⃣</span> 记忆系统</h2>
+
+  <p>Claude Code 有一个<strong>持久记忆系统</strong>，可以跨对话记住重要信息。记忆分为四种类型：</p>
+
+  <table>
+    <thead>
+      <tr><th>类型</th><th>存储内容</th><th>示例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>👤 用户</td><td>你的角色、偏好、技能水平</td><td>「我是后端工程师，刚学 React」</td></tr>
+      <tr><td>💬 反馈</td><td>你之前纠正过的方法和风格偏好</td><td>「不要给测试 mock 数据库」</td></tr>
+      <tr><td>📁 项目</td><td>当前项目的背景、目标、约束</td><td>「下周四之前冻结合并，准备发版」</td></tr>
+      <tr><td>🔗 参考</td><td>外部资源的位置</td><td>「Bug 跟踪在 Linear 的 INGEST 项目里」</td></tr>
+    </tbody>
+  </table>
+
+  <p>你可以直接说「记住……」，Claude 会自动分类并保存。说「我之前的偏好是什么？」可以查看已保存的记忆。</p>
+</section>
+
+<!-- ============ 11. VS Code ============ -->
+<section id="vscode">
+  <h2><span class="icon">🔌</span> 在 VS Code 中使用 Claude Code</h2>
+
+  <p>除了终端命令行，Claude Code 还提供了 <strong>VS Code 原生扩展</strong>，让你在编辑器内直接和 Claude 协作，无需切换窗口。</p>
+
+  <h3>安装扩展</h3>
+  <p>在 VS Code 中按 <code>Cmd+Shift+X</code> 打开扩展市场，搜索 <strong>「Claude Code」</strong>，点击安装。或者直接运行：</p>
+  <pre><span class="hl-cmd">code --install-extension anthropic.claude-code</span></pre>
+
+  <h3>三种打开方式</h3>
+  <table>
+    <thead><tr><th>方式</th><th>操作</th></tr></thead>
+    <tbody>
+      <tr><td>🖱️ 侧边栏</td><td>点击左侧活动栏的 Claude Code 图标，在侧边面板中对话</td></tr>
+      <tr><td>⌨️ 快捷键</td><td>按 <code>Cmd+Shift+L</code>（Mac）或 <code>Ctrl+Shift+L</code>（Windows）快速打开对话面板</td></tr>
+      <tr><td>🔍 命令面板</td><td>按 <code>Cmd+Shift+P</code>，输入「Claude Code: Open Chat」</td></tr>
+    </tbody>
+  </table>
+
+  <h3>核心功能：@ 文件引用</h3>
+  <p>在 VS Code 扩展中，你可以用 <code>@</code> 符号快速引用上下文，Claude 会直接读取对应内容：</p>
+  <pre><span class="hl-note"># 引用文件</span>
+<span class="hl-cmd">你：</span>帮我重构 <span class="hl-arg">@src/utils/helper.ts</span>，把重复逻辑抽成公共函数
+
+<span class="hl-note"># 引用文件夹（Claude 会理解整个目录结构）</span>
+<span class="hl-cmd">你：</span><span class="hl-arg">@src/components/</span> 这个目录下的组件结构合理吗？帮我分析一下
+
+<span class="hl-note"># 引用当前打开的编辑器内容</span>
+<span class="hl-cmd">你：</span>帮我给 <span class="hl-arg">@active-file</span> 加上错误处理
+
+<span class="hl-note"># 引用选中的代码</span>
+<span class="hl-cmd">你：</span>解释一下 <span class="hl-arg">@selection</span> 这段代码的逻辑</pre>
+
+  <h3>选中代码，一键提问</h3>
+  <p>在编辑器中<strong>选中一段代码</strong>，然后：</p>
+  <ol style="padding-left: 20px; margin: 10px 0 16px; color: var(--text);">
+    <li style="margin-bottom: 6px;">右键 → 「Claude Code: Ask About Selection」</li>
+    <li style="margin-bottom: 6px;">或按快捷键 <code>Cmd+Shift+I</code>（Mac）/ <code>Ctrl+Shift+I</code>（Windows）</li>
+  </ol>
+  <p>Claude 会自动把选中的代码作为上下文，你可以直接问「这段代码有什么问题？」或「帮我优化这个函数」。</p>
+
+  <h3>内联 Diff 审查</h3>
+  <p>当 Claude 建议修改代码时，VS Code 扩展会以 <strong>内联 diff</strong> 的方式展示改动——就像 Git 的对比视图一样。你可以：</p>
+  <table>
+    <thead><tr><th>操作</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>✅ 接受全部</td><td>一键应用 Claude 建议的所有改动</td></tr>
+      <tr><td>❌ 拒绝全部</td><td>放弃此次修改建议</td></tr>
+      <tr><td>📝 逐行审查</td><td>在 diff 视图中逐条接受或拒绝每个变更块</td></tr>
+    </tbody>
+  </table>
+
+  <h3>终端集成</h3>
+  <p>VS Code 扩展可以直接使用 VS Code 内置终端执行命令。当 Claude 需要运行 <code>npm test</code> 或 <code>git status</code> 时，会在 VS Code 终端中执行，你可以实时看到输出。</p>
+
+  <h3>常用快捷键速查</h3>
+  <table>
+    <thead><tr><th>快捷键 (Mac)</th><th>快捷键 (Windows)</th><th>功能</th></tr></thead>
+    <tbody>
+      <tr><td><code>Cmd+Shift+L</code></td><td><code>Ctrl+Shift+L</code></td><td>打开/关闭 Claude Code 面板</td></tr>
+      <tr><td><code>Cmd+Shift+I</code></td><td><code>Ctrl+Shift+I</code></td><td>对选中的代码提问</td></tr>
+      <tr><td><code>Cmd+Shift+A</code></td><td><code>Ctrl+Shift+A</code></td><td>将选中代码添加到上下文</td></tr>
+      <tr><td><code>Cmd+Shift+R</code></td><td><code>Ctrl+Shift+R</code></td><td>运行当前文件或项目</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">在 VS Code 扩展中写 Prompt 时，多用 <code>@</code> 引用具体文件和符号。上下文越精确，Claude 给出的代码和建议质量越高。</div>
+
+  <div class="warn">VS Code 扩展和终端 CLI 共享同一个账号和配置，但扩展有自己独立的权限设置，需要在扩展的配置页面中单独管理。</div>
+</section>
+
+<!-- ============ 12. 技巧 ============ -->
+<section id="tips">
+  <h2><span class="icon">🔟</span> 实用技巧</h2>
+
+  <h3>📋 写清楚的 Prompt</h3>
+  <p>对比一下：</p>
+  <table>
+    <thead><tr><th>❌ 模糊</th><th>✅ 清晰</th></tr></thead>
+    <tbody>
+      <tr><td>「修一下登录」</td><td>「登录接口返回 500 错误，帮我看一下 <code>auth.controller.ts</code> 第 42 行附近的逻辑并修复」</td></tr>
+      <tr><td>「加个按钮」</td><td>「在 <code>Dashboard.tsx</code> 的顶部导航栏右侧加一个『导出 CSV』按钮，点击后调用 <code>/api/export</code> 接口」</td></tr>
+      <tr><td>「优化性能」</td><td>「商品列表页滚动到 100 条之后就卡顿了，帮我分析一下渲染瓶颈并优化」</td></tr>
+    </tbody>
+  </table>
+
+  <h3>📦 把小任务拆开</h3>
+  <p>一次性让 Claude 做太多事情容易出错。把一个大的需求拆成 3-5 个小步骤，逐步推进，每一步确认后再继续。</p>
+
+  <h3>🔄 善用 /compact</h3>
+  <p>当对话变得很长时，Claude 的上下文窗口可能会满。输入 <code>/compact</code> 可以压缩历史，释放空间继续对话。</p>
+
+  <h3>📝 用 CLAUDE.md 记录项目约定</h3>
+  <p>在项目根目录放一个 <code>CLAUDE.md</code> 文件，记录：</p>
+  <pre><span class="hl-note"># CLAUDE.md 示例</span>
+<span class="hl-note">## 项目约定</span>
+- 使用 TypeScript 严格模式
+- 组件放在 src/components/ 下
+- API 调用统一走 src/services/
+- 测试用 Vitest，不要用 Jest
+- 提交信息用中文</pre>
+  <p>Claude 每次对话会自动读取这个文件，确保行为和你的项目约定一致。</p>
+
+  <h3>🤝 把 Claude 当同事，不是搜索引擎</h3>
+  <p>Claude Code 擅长的是<strong>协作式编程</strong>——讨论方案、审查代码、迭代优化。给它足够上下文，它会表现得像一个熟悉你项目的资深同事。</p>
+
+  <div class="tip">遇到不确定的事，直接问 Claude：「你觉得这两种方案哪个更好？为什么？」它会给出有深度的分析和建议。</div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Claude Code 使用指南 · 用自然语言编程，让 AI 成为你的编程伙伴
+</footer>
+
+</body>
+</html>
