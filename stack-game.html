@@ -140,23 +140,30 @@ resize();
 window.addEventListener('resize', resize);
 
 // ---- Game State ----
-const BOX_HEIGHT = 28;
-const SPEED_BASE = 2.2;
+const BOX_HEIGHT = 26;
+const SPEED_BASE = 2.8;        // faster starting speed
+const SPEED_PER_SCORE = 0.15;  // steeper ramp
+const SHRINK_RATE = 0.25;      // block shrinks as it moves
+const PERFECT_THRESHOLD = 3;   // tighter perfect window (was 5)
+const MIN_WIDTH = 8;
+
 const COLORS = [
   '#e74c3c', '#e67e22', '#f1c40f', '#2ecc71',
   '#1abc9c', '#3498db', '#9b59b6', '#e91e63',
   '#00bcd4', '#ff5722', '#8bc34a', '#ff9800'
 ];
 
-let blocks = [];         // { x, y, w, color } — each placed box
-let current = null;      // { x, w, dir, speed, color }
+let blocks = [];
+let current = null;
 let cameraY = 0;
 let score = 0;
+let combo = 0;          // consecutive perfects
 let gameOver = false;
-let baseW;  // width of top-most placed block
+let baseW;
+let shrinkActive = false; // block only shrinks after first 5 placements
 
 function baseBlock() {
-  if (blocks.length === 0) return { x: 0, w: W * 0.6 };
+  if (blocks.length === 0) return { x: 0, w: W * 0.55 };
   const top = blocks[blocks.length - 1];
   return { x: top.x, w: top.w };
 }
@@ -167,30 +174,35 @@ function randColor() {
 
 function spawnBlock() {
   const base = baseBlock();
-  const w = base.w;
   const dir = Math.random() < 0.5 ? 1 : -1;
+  const w = base.w;
   const startX = dir === 1 ? -w : W;
-  const speed = SPEED_BASE + score * 0.08;
+  const speed = SPEED_BASE + score * SPEED_PER_SCORE + (Math.random() - 0.5) * 0.8;
   current = {
     x: startX,
+    originW: w,
     w: w,
     dir: dir,
     speed: speed,
     color: randColor(),
+    traveled: 0,
   };
 }
 
 function init() {
   blocks = [];
   score = 0;
+  combo = 0;
   cameraY = 0;
   gameOver = false;
-  baseW = W * 0.6;
+  shrinkActive = false;
+  baseW = W * 0.55;
   blocks.push({ x: (W - baseW) / 2, y: H - BOX_HEIGHT - 40, w: baseW, color: randColor() });
   spawnBlock();
   updateUI();
   restartBtn.classList.remove('show');
   hintEl.style.display = 'block';
+  messageEl.textContent = '';
 }
 
 function placeBlock() {
@@ -201,19 +213,15 @@ function placeBlock() {
   const overlap = getOverlap(current, base);
 
   if (overlap <= 0) {
-    // missed completely
     gameOver = true;
-    messageEl.textContent = '差一点点！';
+    messageEl.textContent = combo > 2 ? `连击 ${combo} 次！可惜了` : '差一点点！';
     restartBtn.classList.add('show');
     return;
   }
 
-  // Cut to overlap region
   const newX = Math.max(current.x, base.x);
   const newW = overlap;
-
-  // Check if perfect (within 4px)
-  const perfect = Math.abs(current.x - base.x) < 5;
+  const perfect = Math.abs(current.x - base.x) < PERFECT_THRESHOLD;
 
   blocks.push({
     x: newX,
@@ -222,33 +230,37 @@ function placeBlock() {
     color: current.color,
   });
 
-  score++;
-  updateUI();
-
   if (perfect) {
-    messageEl.textContent = '完美！';
-    // slightly widen the next block
-    baseW = Math.min(newW * 1.1, W * 0.7);
+    combo++;
+    const bonus = combo >= 5 ? 3 : combo >= 3 ? 2 : 1;
+    score += bonus;
+    messageEl.textContent = combo >= 5 ? `🔥 ${combo}连击! +${bonus}` : combo >= 3 ? `✨ ${combo}连击! +${bonus}` : '完美！';
+    // combo bonus: width slightly restored
+    baseW = Math.min(newW * 1.08 + combo * 0.8, W * 0.6);
   } else {
+    combo = 0;
     messageEl.textContent = '';
     baseW = newW;
   }
+
+  // Enable shrink after a few placements
+  if (score >= 5) shrinkActive = true;
 
   // Scroll camera
   const targetY = blocks[blocks.length - 1].y - H * 0.4;
   cameraY = targetY;
 
-  // Remove blocks that are far off screen
-  while (blocks.length > 20) blocks.shift();
+  while (blocks.length > 25) blocks.shift();
 
   spawnBlock();
 
-  // If block got too narrow
-  if (baseW < 10) {
+  if (baseW < MIN_WIDTH) {
     gameOver = true;
-    messageEl.textContent = '太窄了！';
+    messageEl.textContent = `太窄了！得分: ${score}`;
     restartBtn.classList.add('show');
   }
+
+  updateUI();
 }
 
 function getOverlap(a, b) {
@@ -259,32 +271,22 @@ function getOverlap(a, b) {
 
 function updateUI() {
   scoreEl.textContent = score;
-  if (gameOver) {
-    restartBtn.classList.add('show');
-  }
+  if (gameOver) restartBtn.classList.add('show');
 }
 
 // ---- Input ----
-canvas.addEventListener('click', (e) => {
-  if (gameOver) return;
-  placeBlock();
-});
-
+canvas.addEventListener('click', () => { if (!gameOver) placeBlock(); });
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault();
-  if (gameOver) return;
-  placeBlock();
+  if (!gameOver) placeBlock();
 });
 
-window.restartGame = () => {
-  init();
-};
+window.restartGame = () => init();
 
 // ---- Render ----
 function draw() {
   ctx.clearRect(0, 0, W, H);
 
-  // Background gradient
   const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
   bgGrad.addColorStop(0, '#16213e');
   bgGrad.addColorStop(0.5, '#1a1a2e');
@@ -293,7 +295,7 @@ function draw() {
   ctx.fillRect(0, 0, W, H);
 
   // Grid
-  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.025)';
   ctx.lineWidth = 0.5;
   const gs = 40;
   for (let x = 0; x < W; x += gs) {
@@ -303,7 +305,7 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
   }
 
-  // Draw placed blocks
+  // Placed blocks
   ctx.shadowColor = 'rgba(0,0,0,0.3)';
   ctx.shadowBlur = 8;
   for (const b of blocks) {
@@ -313,65 +315,91 @@ function draw() {
   }
   ctx.shadowBlur = 0;
 
-  // Draw current moving block
+  // Moving block
   if (current && !gameOver) {
     const base = blocks[blocks.length - 1];
     const sy = base.y - BOX_HEIGHT - cameraY;
 
-    // Ghost
-    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    // Ghost (shows where previous block was)
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
     ctx.fillRect(base.x, sy, base.w, BOX_HEIGHT);
 
-    // Moving block
+    // Warning glow when block is shrinking
+    if (shrinkActive && current.w < current.originW * 0.5) {
+      ctx.shadowColor = 'rgba(255,100,100,0.4)';
+      ctx.shadowBlur = 16;
+    }
+
     drawBlock(current.x, sy, current.w, BOX_HEIGHT, current.color, 0.9);
+    ctx.shadowBlur = 0;
+
+    // Shrink indicator bar
+    if (shrinkActive) {
+      const shrinkPct = current.w / current.originW;
+      const barW = base.w;
+      const barX = base.x;
+      const barY = sy - 8;
+      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      ctx.fillRect(barX, barY, barW, 3);
+      const barColor = shrinkPct > 0.5 ? '#2ecc71' : shrinkPct > 0.25 ? '#f1c40f' : '#e74c3c';
+      ctx.fillStyle = barColor;
+      ctx.fillRect(barX, barY, barW * shrinkPct, 3);
+    }
   }
 
-  // Perfect line indicator
+  // Combo indicator
+  if (combo >= 3 && !gameOver) {
+    const last = blocks[blocks.length - 1];
+    const sy = last.y - cameraY;
+    ctx.fillStyle = '#fff';
+    ctx.font = '300 13px "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`x${combo}`, last.x + last.w / 2, sy - 14);
+  }
+
+  // Perfect line
   if (blocks.length > 1 && !gameOver) {
     const last = blocks[blocks.length - 1];
     const sy = last.y - cameraY;
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    ctx.moveTo(last.x, sy + BOX_HEIGHT / 2);
-    ctx.lineTo(last.x + last.w, sy + BOX_HEIGHT / 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    const hw = PERFECT_THRESHOLD;
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fillRect(last.x - hw, sy, hw * 2, BOX_HEIGHT);
+    ctx.fillRect(last.x + last.w - hw, sy, hw * 2, BOX_HEIGHT);
   }
 
-  // Game Over overlay
+  // Game Over
   if (gameOver) {
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
     ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#fff';
-    ctx.font = '300 32px "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.font = '300 34px "PingFang SC", "Microsoft YaHei", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('游戏结束', W / 2, H / 2 - 20);
-    ctx.font = '16px "PingFang SC", "Microsoft YaHei", sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.fillText(`最终得分: ${score}`, W / 2, H / 2 + 24);
+    ctx.fillText('游戏结束', W / 2, H / 2 - 24);
+    ctx.font = '15px "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillText(`得分: ${score}`, W / 2, H / 2 + 16);
+    if (combo >= 3) {
+      ctx.fillStyle = '#f1c40f';
+      ctx.fillText(`最高连击: ${combo}x`, W / 2, H / 2 + 42);
+    }
   }
 }
 
 function drawBlock(x, y, w, h, color, alpha) {
   ctx.globalAlpha = alpha;
 
-  // Main face
   const grad = ctx.createLinearGradient(x, y, x, y + h);
   grad.addColorStop(0, color);
   grad.addColorStop(1, shadeColor(color, -30));
   ctx.fillStyle = grad;
-  roundRect(x, y, w, h, 3);
+  roundRect(x, y, w, h, 2);
   ctx.fill();
 
-  // Top highlight
-  ctx.fillStyle = 'rgba(255,255,255,0.18)';
-  ctx.fillRect(x + 2, y + 1, w - 4, 4);
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  ctx.fillRect(x + 2, y + 1, w - 4, 3);
 
-  // Side 3D effect
-  ctx.fillStyle = shadeColor(color, -20);
-  ctx.fillRect(x, y + h - 3, w, 3);
+  ctx.fillStyle = shadeColor(color, -18);
+  ctx.fillRect(x, y + h - 2, w, 2);
 
   ctx.globalAlpha = 1;
 }
@@ -399,18 +427,27 @@ function shadeColor(color, percent) {
   return `rgb(${R},${G},${B})`;
 }
 
-// ---- Loop ----
+// ---- Update ----
 function update() {
   if (gameOver || !current) return;
 
   current.x += current.dir * current.speed;
+  current.traveled += current.speed;
 
-  const base = blocks[blocks.length - 1];
+  // Block SHRINKS as it travels (after warmup)
+  if (shrinkActive && current.traveled > 40) {
+    const shrink = (current.traveled - 40) * SHRINK_RATE;
+    current.w = Math.max(MIN_WIDTH, current.originW - shrink);
+  }
+
   // Bounce at edges
   if (current.dir === 1 && current.x + current.w >= W) {
     current.dir = -1;
+    // Speed boost after bounce (adds difficulty)
+    current.speed += 0.15;
   } else if (current.dir === -1 && current.x <= 0) {
     current.dir = 1;
+    current.speed += 0.15;
   }
 }
 
@@ -420,17 +457,8 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-// ---- Init ----
 init();
 loop();
-
-// Handle window resize for base block
-window.addEventListener('resize', () => {
-  resize();
-  if (blocks.length > 0 && !gameOver) {
-    // Recenter
-  }
-});
 </script>
 </body>
 </html>
