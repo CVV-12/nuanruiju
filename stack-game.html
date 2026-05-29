@@ -141,9 +141,9 @@ window.addEventListener('resize', resize);
 
 // ---- Game State ----
 const BOX_HEIGHT = 26;
-const SPEED_BASE = 2.8;
-const SPEED_PER_SCORE = 0.35;   // much steeper ramp: speed grows fast
-const SHRINK_RATE = 0.32;       // faster shrink when hesitating
+const SPEED_BASE = 5.5;          // much faster starting speed
+const SPEED_PER_SCORE = 0.6;     // aggressive per-score increase
+const SHRINK_RATE = 0.45;        // faster shrink
 const PERFECT_THRESHOLD = 3;
 const MIN_WIDTH = 8;
 
@@ -177,7 +177,7 @@ function spawnBlock() {
   const dir = Math.random() < 0.5 ? 1 : -1;
   const w = base.w;
   const startX = dir === 1 ? -w : W;
-  const speed = SPEED_BASE + score * SPEED_PER_SCORE + score * score * 0.004 + (Math.random() - 0.5) * 1.2;
+  const speed = SPEED_BASE + score * SPEED_PER_SCORE + score * score * 0.008 + (Math.random() - 0.5) * 1.5;
   current = {
     x: startX,
     originW: w,
@@ -444,10 +444,10 @@ function update() {
   if (current.dir === 1 && current.x + current.w >= W) {
     current.dir = -1;
     // Speed boost after bounce (adds difficulty)
-    current.speed += 0.3 + score * 0.02;
+    current.speed += 0.5 + score * 0.04;
   } else if (current.dir === -1 && current.x <= 0) {
     current.dir = 1;
-    current.speed += 0.3 + score * 0.02;
+    current.speed += 0.5 + score * 0.04;
   }
 }
 
